@@ -39,7 +39,8 @@ pipeline {
         script {
             sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} .'
             def dockerImage = docker.image("${DOCKER_IMAGE}")
-             withDockerRegistry(credentialsId: 'docker-cred', url: 'https://hub.docker.com/') {
+            withCredentials([usernamePassword(credentialsId: 'docker-cred', passwordVariable: 'docker_password')]) {
+            sh "docker login -u cloud2023 -p ${docker_password}"
                 dockerImage.push()
             }
         }
